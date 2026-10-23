@@ -6,7 +6,7 @@ import shutil
 from datetime import date
 
 SERVICE_RATES = {"Oil Change": 1500, "Wheel Alignment": 800,
-                 "General": 2500,"Brake Check": 1200}
+                 "General": 2500, "Brake Check": 1200}
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "")
 service_records = {}
 
@@ -44,16 +44,18 @@ def get_total_cost(vehicle_no):
 
 def job_card_id(vehicle_no):
     """Generate a short job card id from the vehicle number."""
-    return hashlib.md5(vehicle_no.encode(), usedforsecurity=False).hexdigest()[:8]
+    digest = hashlib.md5(vehicle_no.encode(), usedforsecurity=False)
+    return digest.hexdigest()[:8]
 
 
 def busiest_vehicle():
     """Return the vehicle with the most service jobs."""
-    best=None
+    best = None
     for vehicle, jobs in service_records.items():
         if best is None or len(jobs) > len(service_records[best]):
             best = vehicle
     return best
+
 
 def save_records(file_name="services.json"):
     """Save all service records to a JSON file."""
@@ -86,7 +88,8 @@ def main():
     print("Job card for KA01AB1234:", job_card_id("KA01AB1234"))
     save_records()
     loaded = load_records()
-    print("Vehicles on file:", len(loaded), "| busiest vehicle:", busiest_vehicle())
+    print("Vehicles on file:", len(loaded),
+          "| busiest vehicle:", busiest_vehicle())
 
 
 if __name__ == "__main__":
